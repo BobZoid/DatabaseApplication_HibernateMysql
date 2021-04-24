@@ -113,6 +113,7 @@ public class Menu {
         System.out.println("1. View all");
         System.out.println("2. View games");
         System.out.println("3. View developers");
+        System.out.println("4. View games based on developers");
         System.out.println("\n0.Return to main menu");
         System.out.println("=================================");
         int choice = scanInt();
@@ -126,6 +127,8 @@ public class Menu {
             case 3:
                 manage.showDevelopers();
                 break;
+            case 4:
+                manage.findByDev();
             case 0:
                 return;
             default:

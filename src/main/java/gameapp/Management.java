@@ -109,18 +109,7 @@ public class Management {
     }
 
     public void editDeveloper() {
-        int id;
-        showDevelopers();
-        while (true) {
-            System.out.print("\nCompanyID of developer: ");
-            id = scanInt();
-            if(Developer.idBank.contains(id)) {
-                break;
-            } else {
-                System.out.println("ID does not exist. Please try again\n");
-                showDevelopers();
-            }
-        }
+        int id = inputDevId();
         EntityManager em = emf.createEntityManager();
         Developer dev = em.find(Developer.class, id);
         System.out.println(dev);
@@ -142,6 +131,22 @@ public class Management {
         em.persist(dev);
         em.getTransaction().commit();
         em.close();
+    }
+
+    private int inputDevId() {
+        int id;
+        showDevelopers();
+        while (true) {
+            System.out.print("\nCompanyID of developer: ");
+            id = scanInt();
+            if(Developer.idBank.contains(id)) {
+                break;
+            } else {
+                System.out.println("ID does not exist. Please try again\n");
+                showDevelopers();
+            }
+        }
+        return id;
     }
 
     public void connectToDeveloper() {
@@ -187,4 +192,14 @@ public class Management {
     }
 
 
+    public void findByDev() {
+        int id = inputDevId();
+        EntityManager em = emf.createEntityManager();
+        System.out.println("You have selected: ");
+        System.out.println(em.find(Developer.class, id));
+        Query how = em.createQuery("SELECT g FROM Game g");
+        List<Game> spelen = how.getResultList();
+        System.out.println("<Games made by selected developer>");
+        spelen.stream().filter(g -> g.getDev().getCompanyId()==id).forEach(System.out::println);
+    }
 }
