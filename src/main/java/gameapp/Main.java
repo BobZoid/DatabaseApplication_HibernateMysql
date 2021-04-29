@@ -1,10 +1,7 @@
 package gameapp;
 
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
+import javax.persistence.*;
 import java.util.List;
 
 public class Main {
@@ -18,10 +15,13 @@ public class Main {
         em.close();
         Developer.idBank.addAll(ids);
         Game.idBank.addAll(alsoIds);
+
         Menu meny = new Menu();
+
         while(true) {
             meny.mainMenu();
         }
+
 
 
     }

@@ -8,11 +8,11 @@ public class Game {
     static ArrayList<Integer> idBank = new ArrayList<>();
     @Id
     @GeneratedValue
-    int id;
-    String name;
-    String price;
-    @OneToOne
-    Developer dev;
+    private int id;
+    private String name;
+    private String price;
+    @ManyToOne (cascade = CascadeType.PERSIST)
+    private Developer dev;
 
     public Game(Developer dev) {
         this.dev = dev;
@@ -59,12 +59,15 @@ public class Game {
         this.name = name;
     }
 
-    @Override
-    public String toString() {
-        return "Game{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price='" + price + '\'' +
-                '}';
-    }
+
+        @Override
+        public String toString() {
+        String end = "";
+        if (dev!=null) end = "Developer: " + dev.getDeveloperName();
+            return "\nID: " + id +
+                    "\nName: " + name +
+                    "\nPrice: " + price +
+                    "\n" + end;
+
+        }
 }

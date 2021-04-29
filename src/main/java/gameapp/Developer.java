@@ -1,16 +1,18 @@
 package gameapp;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Developer {
     static ArrayList<Integer> idBank = new ArrayList<>();
     @Id
-    int companyId;
-    String developerName;
-    String earnings;
+    private int companyId;
+    private String developerName;
+    private String earnings;
+    @OneToMany (cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    private List<Game> games = new ArrayList<>();
 
 
     public Developer(int id, String developerName, String earnings) {
@@ -20,8 +22,17 @@ public class Developer {
         Developer.idBank.add(id);
     }
 
+
     public Developer() {
 
+    }
+
+    public List<Game> getGames() {
+        return games;
+    }
+
+    public void setGames(List<Game> games) {
+        this.games = games;
     }
 
     public int getCompanyId() {
@@ -50,10 +61,13 @@ public class Developer {
 
     @Override
     public String toString() {
-        return "Developer{" +
-                "companyId=" + companyId +
-                ", developerName='" + developerName + '\'' +
-                ", earnings='" + earnings + '\'' +
-                '}';
+        String end= "";
+        for (Game gem: games) {
+            end+=gem.getName() + " ";
+        }
+        return "\nCompanyID: " + companyId +
+                "\nDeveloperName: " + developerName +
+                "\nEarnings: " + earnings +
+                "\nGames: " + end + ",";
     }
 }
