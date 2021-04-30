@@ -74,8 +74,8 @@ public class Management {
     private int generateId() {
         double min = Math.ceil(1000);
         double max = Math.floor(9999);
-        int id = (int)Math.round(Math.floor(Math.random() * (max - min) + min));
-        return id;
+        return (int)Math.round(Math.floor(Math.random() * (max - min) + min));
+
     }
 
     public void editGame() {
@@ -227,6 +227,19 @@ public class Management {
         spel.setDev(null);
         em.getTransaction().begin();
         em.merge(dev);
+        em.getTransaction().commit();
+        em.close();
+    }
+
+    public void deleteDev() {
+        EntityManager em = emf.createEntityManager();
+        int id = inputDevId();
+        Developer dev = em.find(Developer.class, id);
+        TypedQuery<Game> giveAll = em.createQuery("SELECT g FROM Game g", Game.class);
+        List<Game> allGames = giveAll.getResultList();
+        em.getTransaction().begin();
+        allGames.stream().filter(g->g.getDev()==dev).forEach(g->g.setDev(null));
+        em.remove(dev);
         em.getTransaction().commit();
         em.close();
     }

@@ -63,11 +63,11 @@ public class Developer {
     public String toString() {
         String end= "";
         for (Game gem: games) {
-            end+=gem.getName() + " ";
+            end+=gem.getName() + ", ";
         }
         return "\nCompanyID: " + companyId +
                 "\nDeveloperName: " + developerName +
                 "\nEarnings: " + earnings +
-                "\nGames: " + end + ",";
+                "\nGames: " + end;
     }
 }
