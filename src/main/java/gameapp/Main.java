@@ -17,7 +17,6 @@ public class Main {
         Game.idBank.addAll(alsoIds);
 
         Menu meny = new Menu();
-
         while(true) {
             meny.mainMenu();
         }

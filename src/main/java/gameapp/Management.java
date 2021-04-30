@@ -151,6 +151,10 @@ public class Management {
         System.out.print("\nID of developer: ");
         int id = inputDevId();
         Game spel = em.find(Game.class, gem);
+        if(spel.getDev()!=null) {
+            System.out.println("Game already assigned to a different Developer. \nReturning to main menu");
+            return;
+        }
         Developer dev = em.find(Developer.class, id);
         em.getTransaction().begin();
         spel.setDev(dev);
@@ -222,9 +226,23 @@ public class Management {
     public void removeGameFromDev() {
         EntityManager em = emf.createEntityManager();
         Developer dev = em.find(Developer.class, inputDevId());
-        Game spel = em.find(Game.class, inputGameId());
-        dev.getGames().remove(spel);
-        spel.setDev(null);
+        TypedQuery<Game> allGames = em.createQuery("SELECT g FROM Game g", Game.class);
+        List<Game> allaSpel = allGames.getResultList();
+        Game gem=null;
+        if (dev.getGames().size()>0) {
+            while(true) {
+                gem = em.find(Game.class, inputGameId());
+                if(gem.getDev()==dev) break;
+                else {
+                    System.out.println("Game is not produced by selected developer. Please try again.");
+                }
+            }
+            gem.setDev(null);
+        } else {
+            System.out.println("Developer does not have any registered games. Returning to main menu");
+            return;
+        }
+        dev.getGames().remove(gem);
         em.getTransaction().begin();
         em.merge(dev);
         em.getTransaction().commit();

@@ -10,7 +10,7 @@
             <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/team_martin?serverTimezone=UTC"/>
             <property name="javax.persistence.jdbc.user" value="martin"/>
-            <property name="javax.persistence.jdbc.password" value="jagarentrollkarl"/>
+            <property name="javax.persistence.jdbc.password" value="martin"/>
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.dialect"
                       value="org.hibernate.dialect.MySQL57Dialect"/>
