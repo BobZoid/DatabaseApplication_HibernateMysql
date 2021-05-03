@@ -2,6 +2,7 @@ package gameapp;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Game {
@@ -11,12 +12,19 @@ public class Game {
     private int id;
     private String name;
     private String price;
-    @ManyToOne (cascade = CascadeType.PERSIST)
-    private Developer dev;
+    //Ändrat här
+    @ManyToMany (cascade = CascadeType.PERSIST)
+    private List<Developer> devs=new ArrayList<>();
+    /*Ny variabel, tar den senare
+    @OneToMany
+    private LocalRelease localRelease; */
 
+    /* Varför har vi ens denna?
     public Game(Developer dev) {
-        this.dev = dev;
+        devs.add(dev);
     }
+
+     */
 
     public Game(String name, String price) {
         this.name = name;
@@ -26,13 +34,30 @@ public class Game {
     public Game() {
 
     }
-
-    public Developer getDev() {
-        return dev;
+    /*
+    public LocalRelease getReleaseDate() {
+        return localRelease;
     }
 
-    public void setDev(Developer dev) {
-        this.dev = dev;
+    public void setReleaseDate(LocalRelease localRelease) {
+        this.localRelease = localRelease;
+    }
+    */
+    public List<Developer> getDev() {
+        return devs;
+    }
+
+    public void setDev(List<Developer> devs) {
+        this.devs = devs;
+    }
+
+    //ny
+    public void removeDev(Developer dev) {
+        devs.remove(dev);
+    }
+    //ny
+    public void addDevs(Developer dev) {
+        devs.add(dev);
     }
 
     public String getPrice() {
@@ -59,11 +84,18 @@ public class Game {
         this.name = name;
     }
 
-
+//Ny toString här
         @Override
         public String toString() {
-        String end = "";
-        if (dev!=null) end = "Developer: " + dev.getDeveloperName();
+        String end = "Developer: ";
+        if (devs.size()!=0) {
+            for(int x=0; x<devs.size(); x++) {
+                Developer dev = devs.get(x);
+                end+=dev.getDeveloperName() + ", ";
+            }
+        }
+
+
             return "\nID: " + id +
                     "\nName: " + name +
                     "\nPrice: " + price +

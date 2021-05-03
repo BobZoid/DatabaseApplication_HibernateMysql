@@ -129,6 +129,11 @@ public class Management {
     }
 
     private int inputDevId() {
+        //Ifall inga utvecklare finns
+        if (Developer.idBank.size()==0) {
+            System.out.println("No developers available");
+            return 0;
+        }
         int id;
         showDevelopers();
         while (true) {
@@ -145,25 +150,34 @@ public class Management {
     }
 
     public void connectToDeveloper() {
+        //Metoden fungerar ej
         EntityManager em = emf.createEntityManager();
         System.out.print("\n ID of game: ");
         int gem = inputGameId();
         System.out.print("\nID of developer: ");
         int id = inputDevId();
-        Game spel = em.find(Game.class, gem);
-        if(spel.getDev()!=null) {
-            System.out.println("Game already assigned to a different Developer. \nReturning to main menu");
+        //input-metoderna returnerar 0 ifall inga objekt hittas
+        if (id==0 || gem==0) {
+            System.out.println("Developer or game not found. Returning to main");
             return;
         }
+        Game spel = em.find(Game.class, gem);
         Developer dev = em.find(Developer.class, id);
         em.getTransaction().begin();
-        spel.setDev(dev);
+        List<Developer> devs = spel.getDev();
+        devs.add(dev);
+        spel.setDev(devs);
         dev.getGames().add(spel);
         em.getTransaction().commit();
         em.close();
     }
 
     private int inputGameId() {
+        //Ifall inga spel finns så man inte fastnar här
+        if (Game.idBank.size()==0) {
+            System.out.println("No games available");
+            return 0;
+        }
         int id;
         showGames();
         while (true) {
@@ -224,6 +238,7 @@ public class Management {
     }
 
     public void removeGameFromDev() {
+        //fastnade i en loop här. Var tvungen att göra omfattande förändringar
         EntityManager em = emf.createEntityManager();
         Developer dev = em.find(Developer.class, inputDevId());
         TypedQuery<Game> allGames = em.createQuery("SELECT g FROM Game g", Game.class);
@@ -232,31 +247,37 @@ public class Management {
         if (dev.getGames().size()>0) {
             while(true) {
                 gem = em.find(Game.class, inputGameId());
-                if(gem.getDev()==dev) break;
+                //contains här
+                if(gem.getDev().contains(dev)) break;
                 else {
                     System.out.println("Game is not produced by selected developer. Please try again.");
                 }
             }
-            gem.setDev(null);
+            //Nytt metodanrop
+            gem.removeDev(dev);
         } else {
             System.out.println("Developer does not have any registered games. Returning to main menu");
             return;
         }
         dev.getGames().remove(gem);
         em.getTransaction().begin();
+        //merge på båda. Kanske inte behövs?
+        em.merge(gem);
         em.merge(dev);
         em.getTransaction().commit();
         em.close();
     }
 
     public void deleteDev() {
+        //metoden fungerade inte så har gjort ändringar
         EntityManager em = emf.createEntityManager();
         int id = inputDevId();
         Developer dev = em.find(Developer.class, id);
         TypedQuery<Game> giveAll = em.createQuery("SELECT g FROM Game g", Game.class);
         List<Game> allGames = giveAll.getResultList();
         em.getTransaction().begin();
-        allGames.stream().filter(g->g.getDev()==dev).forEach(g->g.setDev(null));
+        //ny ström här
+        allGames.stream().filter(g->g.getDev().contains(dev)).forEach(g->g.removeDev(dev));
         em.remove(dev);
         em.getTransaction().commit();
         em.close();
