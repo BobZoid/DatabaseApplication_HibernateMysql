@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        // WORTH NOTING!! Look at databases. Två connecting databaser skapas trots att bara en borde användas. HJÄLP MIG
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("bajs");
         EntityManager em = emf.createEntityManager();
         Query what = em.createQuery("SELECT d.companyId FROM Developer d");
