@@ -12,8 +12,7 @@ public class Game {
     private int id;
     private String name;
     private String price;
-    //Ändrat här
-    @ManyToMany (cascade = CascadeType.PERSIST)
+    @ManyToMany (cascade = CascadeType.PERSIST, mappedBy = "games")
     private List<Developer> devs=new ArrayList<>();
     /*Ny variabel, tar den senare
     @OneToMany
@@ -51,14 +50,6 @@ public class Game {
         this.devs = devs;
     }
 
-    //ny
-    public void removeDev(Developer dev) {
-        devs.remove(dev);
-    }
-    //ny
-    public void addDevs(Developer dev) {
-        devs.add(dev);
-    }
 
     public String getPrice() {
         return price;
@@ -94,8 +85,6 @@ public class Game {
                 end+=dev.getDeveloperName() + ", ";
             }
         }
-
-
             return "\nID: " + id +
                     "\nName: " + name +
                     "\nPrice: " + price +

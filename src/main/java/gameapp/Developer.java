@@ -12,6 +12,7 @@ public class Developer {
     private String developerName;
     private String earnings;
     @ManyToMany (cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @JoinTable
     private List<Game> games = new ArrayList<>();
 
 

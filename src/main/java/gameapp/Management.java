@@ -53,6 +53,7 @@ public class Management {
     }
 
     public void newDeveloper() {
+        EntityManager em = emf.createEntityManager();
         System.out.print("Developer: ");
         String name = scan.nextLine();
         System.out.print("Earnings: ");
@@ -63,8 +64,8 @@ public class Management {
                 id = generateId();
             } else { break;}
         }
+        Developer.idBank.add(id);
         Developer dev = new Developer(id, name, earnings);
-        EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
         em.persist(dev);
         em.getTransaction().commit();
@@ -150,7 +151,6 @@ public class Management {
     }
 
     public void connectToDeveloper() {
-        //Metoden fungerar ej
         EntityManager em = emf.createEntityManager();
         System.out.print("\n ID of game: ");
         int gem = inputGameId();
@@ -164,9 +164,7 @@ public class Management {
         Game spel = em.find(Game.class, gem);
         Developer dev = em.find(Developer.class, id);
         em.getTransaction().begin();
-        List<Developer> devs = spel.getDev();
-        devs.add(dev);
-        spel.setDev(devs);
+        spel.getDev().add(dev);
         dev.getGames().add(spel);
         em.getTransaction().commit();
         em.close();
@@ -238,27 +236,22 @@ public class Management {
     }
 
     public void removeGameFromDev() {
-        //fastnade i en loop här. Var tvungen att göra omfattande förändringar
         EntityManager em = emf.createEntityManager();
         Developer dev = em.find(Developer.class, inputDevId());
-        TypedQuery<Game> allGames = em.createQuery("SELECT g FROM Game g", Game.class);
-        List<Game> allaSpel = allGames.getResultList();
-        Game gem=null;
+        Game gem;
         if (dev.getGames().size()>0) {
             while(true) {
                 gem = em.find(Game.class, inputGameId());
-                //contains här
                 if(gem.getDev().contains(dev)) break;
                 else {
-                    System.out.println("Game is not produced by selected developer. Please try again.");
+                    System.out.println("Game is not made by selected developer. Please try again.");
                 }
             }
-            //Nytt metodanrop
-            gem.removeDev(dev);
         } else {
             System.out.println("Developer does not have any registered games. Returning to main menu");
             return;
         }
+        gem.getDev().remove(dev);
         dev.getGames().remove(gem);
         em.getTransaction().begin();
         //merge på båda. Kanske inte behövs?
@@ -277,7 +270,7 @@ public class Management {
         List<Game> allGames = giveAll.getResultList();
         em.getTransaction().begin();
         //ny ström här
-        allGames.stream().filter(g->g.getDev().contains(dev)).forEach(g->g.removeDev(dev));
+        allGames.stream().filter(g->g.getDev().contains(dev)).forEach(g->g.getDev().remove(dev));
         em.remove(dev);
         em.getTransaction().commit();
         em.close();
