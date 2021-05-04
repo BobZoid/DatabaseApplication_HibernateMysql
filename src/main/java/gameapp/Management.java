@@ -156,7 +156,6 @@ public class Management {
         int gem = inputGameId();
         System.out.print("\nID of developer: ");
         int id = inputDevId();
-        //input-metoderna returnerar 0 ifall inga objekt hittas
         if (id==0 || gem==0) {
             System.out.println("Developer or game not found. Returning to main");
             return;
@@ -171,7 +170,6 @@ public class Management {
     }
 
     private int inputGameId() {
-        //Ifall inga spel finns så man inte fastnar här
         if (Game.idBank.size()==0) {
             System.out.println("No games available");
             return 0;
@@ -254,7 +252,6 @@ public class Management {
         gem.getDev().remove(dev);
         dev.getGames().remove(gem);
         em.getTransaction().begin();
-        //merge på båda. Kanske inte behövs?
         em.merge(gem);
         em.merge(dev);
         em.getTransaction().commit();
@@ -262,14 +259,12 @@ public class Management {
     }
 
     public void deleteDev() {
-        //metoden fungerade inte så har gjort ändringar
         EntityManager em = emf.createEntityManager();
         int id = inputDevId();
         Developer dev = em.find(Developer.class, id);
         TypedQuery<Game> giveAll = em.createQuery("SELECT g FROM Game g", Game.class);
         List<Game> allGames = giveAll.getResultList();
         em.getTransaction().begin();
-        //ny ström här
         allGames.stream().filter(g->g.getDev().contains(dev)).forEach(g->g.getDev().remove(dev));
         em.remove(dev);
         em.getTransaction().commit();

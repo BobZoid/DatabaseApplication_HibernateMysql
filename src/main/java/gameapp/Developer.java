@@ -2,7 +2,8 @@ package gameapp;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Entity
 public class Developer {
@@ -13,7 +14,7 @@ public class Developer {
     private String earnings;
     @ManyToMany (cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JoinTable
-    private List<Game> games = new ArrayList<>();
+    private Set<Game> games = new TreeSet<>();
 
 
     public Developer(int id, String developerName, String earnings) {
@@ -29,11 +30,11 @@ public class Developer {
     }
 
 
-    public List<Game> getGames() {
+    public Set<Game> getGames() {
         return games;
     }
 
-    public void setGames(List<Game> games) {
+    public void setGames(Set<Game> games) {
         this.games = games;
     }
 

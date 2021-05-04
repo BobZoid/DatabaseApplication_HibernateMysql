@@ -3,27 +3,22 @@ package gameapp;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Entity
 public class Game {
-    static ArrayList<Integer> idBank = new ArrayList<>();
+    static Set<Integer> idBank = new TreeSet<>();
     @Id
     @GeneratedValue
     private int id;
     private String name;
     private String price;
     @ManyToMany (cascade = CascadeType.PERSIST, mappedBy = "games")
-    private List<Developer> devs=new ArrayList<>();
+    private Set<Developer> devs=new TreeSet<>();
     /*Ny variabel, tar den senare
     @OneToMany
     private LocalRelease localRelease; */
-
-    /* Varför har vi ens denna?
-    public Game(Developer dev) {
-        devs.add(dev);
-    }
-
-     */
 
     public Game(String name, String price) {
         this.name = name;
@@ -42,11 +37,11 @@ public class Game {
         this.localRelease = localRelease;
     }
     */
-    public List<Developer> getDev() {
+    public Set<Developer> getDev() {
         return devs;
     }
 
-    public void setDev(List<Developer> devs) {
+    public void setDev(Set<Developer> devs) {
         this.devs = devs;
     }
 
@@ -75,13 +70,14 @@ public class Game {
         this.name = name;
     }
 
-//Ny toString här
         @Override
         public String toString() {
         String end = "Developer: ";
         if (devs.size()!=0) {
+            Developer[] lista = new Developer[devs.size()];
+            lista = devs.toArray(lista);
             for(int x=0; x<devs.size(); x++) {
-                Developer dev = devs.get(x);
+                Developer dev = lista[x];
                 end+=dev.getDeveloperName() + ", ";
             }
         }
