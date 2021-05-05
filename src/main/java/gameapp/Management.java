@@ -1,6 +1,8 @@
 package gameapp;
 
 import javax.persistence.*;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -34,14 +36,17 @@ public class Management {
         em.close();
     }
 
+    //newGame är helt förändrad
     public void newGame() {
-        System.out.print("Title: ");
-        String name = scan.nextLine();
-        System.out.print("Price: ");
-        String price = scan.nextLine();
-        Game spel = new Game(name, price);
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = emf.createEntityManager();;
+        int devID = inputDevId();
+        Developer dev = em.find(Developer.class, devID);
         em.getTransaction().begin();
+        Game spel = new Game(dev);
+        System.out.print("Name of game: ");
+        spel.setName(scan.nextLine());
+        System.out.print("Price of game: ");
+        spel.setPrice(scanDouble());
         em.persist(spel);
         em.getTransaction().commit();
         em.close();
@@ -53,11 +58,10 @@ public class Management {
     }
 
     public void newDeveloper() {
+        //Earnings är tänkt att autogenereras istället
         EntityManager em = emf.createEntityManager();
         System.out.print("Developer: ");
         String name = scan.nextLine();
-        System.out.print("Earnings: ");
-        String earnings = scan.nextLine();
         int id = generateId();
         while(true) {
             if(Developer.idBank.contains(id)) {
@@ -65,7 +69,8 @@ public class Management {
             } else { break;}
         }
         Developer.idBank.add(id);
-        Developer dev = new Developer(id, name, earnings);
+        //Konstruktor ändrad
+        Developer dev = new Developer(id, name);
         em.getTransaction().begin();
         em.persist(dev);
         em.getTransaction().commit();
@@ -95,7 +100,7 @@ public class Management {
             spel.setName(name);
         } else if (choice == 2) {
             System.out.print("Enter new price: ");
-            String price = scan.nextLine();
+            double price = scanDouble();
             spel.setPrice(price);
         } else {return; }
         em.getTransaction().begin();
@@ -111,18 +116,19 @@ public class Management {
         System.out.println(dev);
         System.out.println("\nWhat would you like to edit:");
         System.out.println("1. Company name");
-        System.out.println("2. Earnings");
+        //Detta bör auto genereras istället
+        //System.out.println("2. Earnings");
         System.out.println("0. Return to main");
         int choice = scanInt();
         if (choice==1) {
             System.out.print("New name: ");
             String name = scan.nextLine();
             dev.setDeveloperName(name);
-        } else if (choice==2) {
+        } /*else if (choice==2) {
             System.out.print("New earnings: ");
             String earnings = scan.nextLine();
             dev.setEarnings(earnings);
-        } else {return;}
+        } */else {return;}
         em.getTransaction().begin();
         em.persist(dev);
         em.getTransaction().commit();
@@ -163,7 +169,7 @@ public class Management {
         Game spel = em.find(Game.class, gem);
         Developer dev = em.find(Developer.class, id);
         em.getTransaction().begin();
-        spel.getDev().add(dev);
+        spel.setDev(dev);
         dev.getGames().add(spel);
         em.getTransaction().commit();
         em.close();
@@ -194,6 +200,21 @@ public class Management {
         while(true) {
             try {
                 scanned=scan.nextInt();
+                break;
+            } catch(InputMismatchException e) {
+                System.out.println("Please input numerical data");
+                scan.nextLine();
+            }
+        }
+        scan.nextLine();
+        return scanned;
+    }
+    //ny metod här
+    private double scanDouble() {
+        double scanned;
+        while(true) {
+            try {
+                scanned=scan.nextDouble();
                 break;
             } catch(InputMismatchException e) {
                 System.out.println("Please input numerical data");
@@ -240,7 +261,8 @@ public class Management {
         if (dev.getGames().size()>0) {
             while(true) {
                 gem = em.find(Game.class, inputGameId());
-                if(gem.getDev().contains(dev)) break;
+                //Kan man göra såhär? Kanske en equals metod behövs
+                if(gem.getDev().equals(dev)) break;
                 else {
                     System.out.println("Game is not made by selected developer. Please try again.");
                 }
@@ -249,7 +271,7 @@ public class Management {
             System.out.println("Developer does not have any registered games. Returning to main menu");
             return;
         }
-        gem.getDev().remove(dev);
+        gem.setDev(null);
         dev.getGames().remove(gem);
         em.getTransaction().begin();
         em.merge(gem);
@@ -259,6 +281,8 @@ public class Management {
     }
 
     public void deleteDev() {
+        /*
+        Hela denna metod funkar inte längre
         EntityManager em = emf.createEntityManager();
         int id = inputDevId();
         Developer dev = em.find(Developer.class, id);
@@ -268,6 +292,49 @@ public class Management {
         allGames.stream().filter(g->g.getDev().contains(dev)).forEach(g->g.getDev().remove(dev));
         em.remove(dev);
         em.getTransaction().commit();
+        em.close();*/
+    }
+    //Ny metod här
+    public void newRelease() {
+        EntityManager em = emf.createEntityManager();
+        int gameID;
+        while (true) {
+            gameID = inputGameId();
+            if(gameID!=0) {
+                break;
+            } else {
+                System.out.println("No games to base release on. Please create game first");
+                return;
+            }
+
+        }
+        Game spel =em.find(Game.class, gameID);
+        //Här skulle det behöva säkerställas att användaren matar in rätt format på datumet
+        System.out.println("Time to input your release date. Please inout only numerical data.");
+        System.out.print("Year of release: ");
+        int year = scanInt();
+        System.out.print("Month of release: ");
+        int month = scanInt();
+        System.out.print("Day of release: ");
+        int day = scanInt();
+        //LocalDate date = LocalDate.of(year, month, day);
+        Date date = Date.valueOf(LocalDate.of(year, month, day));
+        System.out.print("Country: ");
+        String country = scan.nextLine();
+        System.out.print("Units sold: ");
+        int sold = scanInt();
+        //Detta kan leda till Exception tror jag
+        LocalRelease release = new LocalRelease(date, country, sold, spel);
+        EntityTransaction trans = em.getTransaction();
+        trans.begin();
+        em.persist(release);
+        spel.addRelease(release);
+        trans.commit();
         em.close();
+
+    }
+
+    public void deleteRelease() {
+        System.out.println("TBA!!!");
     }
 }

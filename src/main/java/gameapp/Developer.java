@@ -6,18 +6,19 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @Entity
+@Table(schema = "team_martin", name = "developer")
 public class Developer {
     static ArrayList<Integer> idBank = new ArrayList<>();
     @Id
     private int companyId;
     private String developerName;
-    private String earnings;
-    @ManyToMany (cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
-    @JoinTable
+    //detta är en double nu
+    private double earnings;
+    @OneToMany (cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "dev")
     private Set<Game> games = new TreeSet<>();
 
 
-    public Developer(int id, String developerName, String earnings) {
+    public Developer(int id, String developerName) {
         companyId = id;
         this.developerName = developerName;
         this.earnings = earnings;
@@ -54,11 +55,11 @@ public class Developer {
         this.developerName = developerName;
     }
 
-    public String getEarnings() {
+    public double getEarnings() {
         return earnings;
     }
 
-    public void setEarnings(String earnings) {
+    public void setEarnings(double earnings) {
         this.earnings = earnings;
     }
 

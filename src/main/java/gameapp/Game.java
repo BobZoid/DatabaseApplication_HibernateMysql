@@ -1,56 +1,37 @@
 package gameapp;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Entity
+@Table(schema = "team_martin", name = "game")
 public class Game {
     static Set<Integer> idBank = new TreeSet<>();
     @Id
     @GeneratedValue
     private int id;
     private String name;
-    private String price;
-    @ManyToMany (cascade = CascadeType.PERSIST, mappedBy = "games")
-    private Set<Developer> devs=new TreeSet<>();
-    /*Ny variabel, tar den senare
-    @OneToMany
-    private LocalRelease localRelease; */
-
-    public Game(String name, String price) {
-        this.name = name;
-        this.price = price;
-    }
+    //Detta är en double nu
+    private double price;
+    //Ändrat majoriteten av alla annotationer här
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "companyid")
+    private Developer dev;
+    @OneToMany(mappedBy = "game", cascade = CascadeType.PERSIST)
+    private Set<LocalRelease> releases = new HashSet<>();
 
     public Game() {
-
-    }
-    /*
-    public LocalRelease getReleaseDate() {
-        return localRelease;
     }
 
-    public void setReleaseDate(LocalRelease localRelease) {
-        this.localRelease = localRelease;
-    }
-    */
-    public Set<Developer> getDev() {
-        return devs;
+    public Game(Developer dev) {
+        this.dev = dev;
     }
 
-    public void setDev(Set<Developer> devs) {
-        this.devs = devs;
-    }
-
-
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -70,21 +51,38 @@ public class Game {
         this.name = name;
     }
 
-        @Override
-        public String toString() {
-        String end = "Developer: ";
-        if (devs.size()!=0) {
-            Developer[] lista = new Developer[devs.size()];
-            lista = devs.toArray(lista);
-            for(int x=0; x<devs.size(); x++) {
-                Developer dev = lista[x];
-                end+=dev.getDeveloperName() + ", ";
-            }
-        }
-            return "\nID: " + id +
-                    "\nName: " + name +
-                    "\nPrice: " + price +
-                    "\n" + end;
+    public void addRelease(LocalRelease release) {
+        releases.add(release);
+    }
 
+    public Developer getDev() {
+        return dev;
+    }
+
+    public void setDev(Developer dev) {
+        this.dev = dev;
+    }
+
+    public Set<LocalRelease> getReleases() {
+        return releases;
+    }
+
+    public void setReleases(Set<LocalRelease> releases) {
+        this.releases = releases;
+    }
+//Helt ny toString behövs här
+
+    @Override
+    public String toString() {
+        String dev=", developer=";
+        if (this.dev != null) {
+            dev +=this.dev.getDeveloperName();
+        } else {
+            dev += "!!NO DEVELOPER SET!!";}
+            return "Game{" +
+                    "id=" + id +
+                    ", name='" + name + '\'' +
+                    ", price=" + price + dev +
+                    ", releases=" + releases.size() + '}';
         }
-}
+    }
