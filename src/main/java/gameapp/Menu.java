@@ -141,8 +141,10 @@ public class Menu {
                 break;
             case 4:
                 showRelease();
+                break;
             case 5:
                 manage.findByDev();
+                break;
             case 0:
                 return;
             default:
@@ -150,7 +152,7 @@ public class Menu {
         }
     }
 
-    private void showRelease() {/*
+    private void showRelease() {
         System.out.println("\n=================================");
         System.out.println("            View Releases               ");
         System.out.println("=================================");
@@ -178,7 +180,7 @@ public class Menu {
             default:
                 System.out.println("Incorrect input. Returning to main");
                 return;
-        }*/
+        }
 
     }
 

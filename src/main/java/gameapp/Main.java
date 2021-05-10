@@ -12,14 +12,15 @@ public class Main {
         Query who = em.createQuery("SELECT g.id FROM Game g");
         List<Integer> alsoIds = who.getResultList();
         List<Integer> ids = what.getResultList();
-        em.close();
         Developer.idBank.addAll(ids);
         Game.idBank.addAll(alsoIds);
 
         Menu meny = new Menu();
         while(true) {
             meny.mainMenu();
+
         }
+
 
 
     }

@@ -14,7 +14,7 @@ public class Developer {
     private String developerName;
     //detta är en double nu
     private double earnings;
-    @OneToMany (cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "dev")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "dev")
     private Set<Game> games = new TreeSet<>();
 
 
@@ -27,9 +27,20 @@ public class Developer {
 
 
     public Developer() {
-
     }
 
+    //Helt ny metod
+    public void calculateEarnings() {
+        double earned = 0;
+        for (Game spel : games) {
+            int sold = 0;
+            for (LocalRelease loco : spel.getReleases()) {
+                sold += loco.getUnitsSold();
+            }
+            earned += spel.getPrice() * sold;
+        }
+        earnings = earned;
+    }
 
     public Set<Game> getGames() {
         return games;
@@ -59,19 +70,37 @@ public class Developer {
         return earnings;
     }
 
-    public void setEarnings(double earnings) {
+    public void calculateEarnings(double earnings) {
         this.earnings = earnings;
     }
 
     @Override
     public String toString() {
-        String end= "";
-        for (Game gem: games) {
-            end+=gem.getName() + ", ";
+        String end = "";
+        for (Game gem : games) {
+            end += gem.getName() + ", ";
         }
         return "\nCompanyID: " + companyId +
                 "\nDeveloperName: " + developerName +
                 "\nEarnings: " + earnings +
                 "\nGames: " + end;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Developer developer = (Developer) o;
+
+        if (companyId != developer.companyId) return false;
+        return developerName != null ? developerName.equals(developer.developerName) : developer.developerName == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = companyId;
+        result = 31 * result + (developerName != null ? developerName.hashCode() : 0);
+        return result;
     }
 }

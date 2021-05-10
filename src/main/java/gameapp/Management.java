@@ -337,4 +337,28 @@ public class Management {
     public void deleteRelease() {
         System.out.println("TBA!!!");
     }
+
+    public void showReleases() {
+        EntityManager em = emf.createEntityManager();
+        Query what = em.createQuery("SELECT loco FROM LocalRelease loco");
+        List<LocalRelease> content = what.getResultList();
+        System.out.println("<Displaying all releases>");
+        for (LocalRelease loco : content) {
+            System.out.println(loco);
+        }
+        System.out.println("<End of list>\n");
+        em.close();
+    }
+
+    public void showReleasesByGame() {
+        System.out.println("TBA!!!");
+    }
+
+    public void showReleasesByDev() {
+        System.out.println("TBA!!!");
+    }
+
+    public void showReleasesByID() {
+        System.out.println("TBA!!!");
+    }
 }
