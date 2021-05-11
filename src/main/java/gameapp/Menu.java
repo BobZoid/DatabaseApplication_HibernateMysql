@@ -1,9 +1,13 @@
 package gameapp;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Menu {
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory("bajs");
     Scanner scan = new Scanner(System.in);
     Management manage = new Management();
 //Uppdaterad MainMenu
@@ -153,6 +157,7 @@ public class Menu {
     }
 
     private void showRelease() {
+        EntityManager em = emf.createEntityManager();
         System.out.println("\n=================================");
         System.out.println("            View Releases               ");
         System.out.println("=================================");
@@ -167,10 +172,14 @@ public class Menu {
                 manage.showReleases();
                 break;
             case 2:
-                manage.showReleasesByGame();
+                System.out.println("Choose game to find releases for:");
+                Game spel = em.find(Game.class, manage.inputGameId());
+                manage.showReleasesByGame(spel);
                 break;
             case 3:
-                manage.showReleasesByDev();
+                System.out.println("Choose developer to find releases for:");
+                Developer dev = em.find(Developer.class, manage.inputDevId());
+                manage.showReleasesByDev(dev);
                 break;
             case 4:
                 manage.showReleasesByID();

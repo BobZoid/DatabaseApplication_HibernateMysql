@@ -135,7 +135,7 @@ public class Management {
         em.close();
     }
 
-    private int inputDevId() {
+    public int inputDevId() {
         //Ifall inga utvecklare finns
         if (Developer.idBank.size()==0) {
             System.out.println("No developers available");
@@ -175,7 +175,7 @@ public class Management {
         em.close();
     }
 
-    private int inputGameId() {
+    public int inputGameId() {
         if (Game.idBank.size()==0) {
             System.out.println("No games available");
             return 0;
@@ -350,12 +350,14 @@ public class Management {
         em.close();
     }
 
-    public void showReleasesByGame() {
-        System.out.println("TBA!!!");
+    public void showReleasesByGame(Game spel) {
+        System.out.println("<Displaying all releases for Game: " + spel.getName() + ">");
+        spel.getReleases().forEach(System.out::println);
+        System.out.println("<End of list>\n");
     }
 
-    public void showReleasesByDev() {
-        System.out.println("TBA!!!");
+    public void showReleasesByDev(Developer dev) {
+
     }
 
     public void showReleasesByID() {
