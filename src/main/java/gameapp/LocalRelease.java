@@ -3,10 +3,12 @@ package gameapp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 
 @Entity
 @Table(schema = "team_martin", name = "local_release")
 public class LocalRelease {
+    static HashSet<Integer> idBank = new HashSet<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int releaseID;

@@ -1,155 +1,119 @@
 package gameapp;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import java.util.InputMismatchException;
+
+import javax.persistence.*;
+import javax.swing.*;
 import java.util.Scanner;
 
 public class Menu {
     EntityManagerFactory emf = Persistence.createEntityManagerFactory("bajs");
     Scanner scan = new Scanner(System.in);
     Management manage = new Management();
-//Uppdaterad MainMenu
+
     public void mainMenu() {
-        System.out.println("\n=================================");
-        System.out.println("              Menu               ");
-        System.out.println("=================================");
-        System.out.println("1. View");
-        System.out.println("2. Add");
-        System.out.println("3. Edit");
-        System.out.println("4. Delete");
-        System.out.println("\n0.Exit");
-        System.out.println("=================================");
-        int choice = scanInt();
-        switch (choice) {
-            case 1:
+        Object[] options = {"View", "Add", "Edit", "Delete", "Exit"};
+        int n = JOptionPane.showOptionDialog(null, "What do you want to do today?",
+                "Main Menu", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        switch (n) {
+            case 0:
                 showData();
                 break;
-            case 2: addData();
+            case 1:
+                addData();
                 break;
-            case 3: editData();
+            case 2:
+                editData();
                 break;
-            case 4: deleteData();
+            case 3: deleteData();
                 break;
-            case 0: System.exit(0);
+            case 4: System.exit(0);
             default: System.out.println("Incorrect input");
         }
     }
-//Uppdaterat Deletemeny. Ett nytt val
+
+
     private void deleteData() {
-        System.out.println("\n=================================");
-        System.out.println("              Delete               ");
-        System.out.println("=================================");
-        System.out.println("1. Delete game");
-        System.out.println("2. Delete Release");
-        System.out.println("3. Delete Developer");
-        System.out.println("4. Remove game from developer");
-        System.out.println("\n0. Return to main menu");
-        System.out.println("=================================");
-        int choice = scanInt();
-        switch (choice) {
-            case 1:
+        Object[] options = {"Delete Game", "Delete Release", "Delete Developer", "Return to main menu"};
+        int n = JOptionPane.showOptionDialog(null, "What do you want to delete?",
+                "Main Menu", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        switch (n) {
+            case 0:
                 manage.deleteGame();
                 break;
-            case 4:
-                manage.removeGameFromDev();
-                break;
-            case 3:
+            case 2:
                 manage.deleteDev();
                 break;
-            case 2:
+            case 1:
                 manage.deleteRelease();
                 break;
-            case 0:
+            case 4:
                 return;
-            default:
-                System.out.println("Incorrect input");
         }
     }
 
     private void editData() {
-        System.out.println("\n=================================");
-        System.out.println("              Edit               ");
-        System.out.println("=================================");
-        System.out.println("1. Edit game");
-        System.out.println("2. Edit developer");
-        System.out.println("3. Connect game to developer");
-        System.out.println("\n0. Return to main menu");
-        System.out.println("=================================");
-        int choice = scanInt();
-        switch (choice) {
-            case 1:
+        Object[] options = {"Edit Game", "Edit Release", "Edit Developer", "Connect Game to Developer",
+                "Connect Release to Game", "Return to main menu"};
+        int n = JOptionPane.showOptionDialog(null, "What do you want to edit?",
+                "Main Menu", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        switch (n) {
+            case 0:
                 manage.editGame();
+                break;
+            case 1:
+                manage.editRelease();
                 break;
             case 2:
                 manage.editDeveloper();
                 break;
             case 3:
-                manage.connectToDeveloper();
+                //manage.connectToDeveloper();
                 break;
-            case 0:
+            case 4:
+                //manage.connectToGame();
+            case 5:
                 return;
-            default:
-                System.out.println("Incorrect input");
         }
     }
 
     private void addData() {
-        System.out.println("\n=================================");
-        System.out.println("              Add data               ");
-        System.out.println("=================================");
-        System.out.println("1. Add new game");
-        System.out.println("2. Add new developer");
-        System.out.println("3. Add new release");
-        System.out.println("\n0. Return to main menu");
-        System.out.println("=================================");
-        int choice = scanInt();
+        Object[] options = {"Add new Game", "Add new Developer", "Add new release", "Return to main menu"};
+        int choice = JOptionPane.showOptionDialog(null, "What do you want to add?",
+                "Add data", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
         switch (choice) {
-            case 1:
+            case 0:
                 manage.newGame();
                 break;
-            case 2:
+            case 1:
                 manage.newDeveloper();
                 break;
-            case 3:
+            case 2:
                 manage.newRelease();
-            case 0:
+            case 3:
                 return;
-            default:
-                System.out.println("Incorrect input");
         }
     }
 
     private void showData() {
-        System.out.println("\n=================================");
-        System.out.println("            Show Data               ");
-        System.out.println("=================================");
-        System.out.println("1. View all");
-        System.out.println("2. View games");
-        System.out.println("3. View developers");
-        System.out.println("4. View releases");
-        System.out.println("5. View games based on developers");
-        System.out.println("\n0.Return to main menu");
-        System.out.println("=================================");
-        int choice = scanInt();
-        switch (choice) {
-            case 1:
+        Object[] options = {"View All", "View Releases", "View Developers", "View Games", "Return to main menu"};
+        int n = JOptionPane.showOptionDialog(null, "What do you want to view?",
+                "View Data", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+        switch (n) {
+            case 0:
                 manage.showAll();
                 break;
-            case 2:
+            case 3:
                 manage.showGames();
                 break;
-            case 3:
+            case 2:
                 manage.showDevelopers();
                 break;
-            case 4:
+            case 1:
                 showRelease();
                 break;
-            case 5:
-                manage.findByDev();
-                break;
-            case 0:
+            case 4:
                 return;
             default:
                 System.out.println("Incorrect input");
@@ -158,53 +122,27 @@ public class Menu {
 
     private void showRelease() {
         EntityManager em = emf.createEntityManager();
-        System.out.println("\n=================================");
-        System.out.println("            View Releases               ");
-        System.out.println("=================================");
-        System.out.println("1. View all ");
-        System.out.println("2. View releases based on game");
-        System.out.println("3. View releases based on developer");
-        System.out.println("4. View releases based on release ID");
-        System.out.println("\n0.Return to main menu");
-        System.out.println("=================================");
-        switch (scanInt()) {
-            case 1:
+
+        Object[] options = {"View All", "View Releases based on Game", "View Releases based on Developer", "View Releases based on ID", "Return to main menu"};
+        int choice = JOptionPane.showOptionDialog(null, "What do you want to view?",
+                "View Releases", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+        switch (choice) {
+            case 0:
                 manage.showReleases();
                 break;
+            case 1:
+                manage.showReleasesByGame();
+                break;
             case 2:
-                System.out.println("Choose game to find releases for:");
-                Game spel = em.find(Game.class, manage.inputGameId());
-                manage.showReleasesByGame(spel);
+                manage.showReleasesByDev();
                 break;
             case 3:
-                System.out.println("Choose developer to find releases for:");
-                Developer dev = em.find(Developer.class, manage.inputDevId());
-                manage.showReleasesByDev(dev);
+                //manage.showReleasesByID();
                 break;
             case 4:
-                manage.showReleasesByID();
-                break;
-            case 0:
-            return;
-            default:
-                System.out.println("Incorrect input. Returning to main");
                 return;
         }
 
-    }
-
-    private int scanInt() {
-        int scanned;
-        while(true) {
-            try {
-                scanned=scan.nextInt();
-                break;
-            } catch(InputMismatchException e) {
-                System.out.println("Please input numerical data");
-                scan.nextLine();
-            }
-        }
-        scan.nextLine();
-        return scanned;
     }
 }

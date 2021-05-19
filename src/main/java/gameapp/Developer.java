@@ -42,14 +42,6 @@ public class Developer {
         earnings = earned;
     }
 
-    public Set<Game> getGames() {
-        return games;
-    }
-
-    public void setGames(Set<Game> games) {
-        this.games = games;
-    }
-
     public int getCompanyId() {
         return companyId;
     }
@@ -68,6 +60,18 @@ public class Developer {
 
     public double getEarnings() {
         return earnings;
+    }
+
+    public void setEarnings(double earnings) {
+        this.earnings = earnings;
+    }
+
+    public Set<Game> getGames() {
+        return games;
+    }
+
+    public void setGames(Set<Game> games) {
+        this.games = games;
     }
 
     public void calculateEarnings(double earnings) {
