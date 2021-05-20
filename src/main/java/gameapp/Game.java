@@ -80,15 +80,16 @@ public class Game {
 
     @Override
     public String toString() {
-        String dev=", developer=";
+        String dev="";
         if (this.dev != null) {
-            dev +=this.dev.getDeveloperName();
+            dev =this.dev.getDeveloperName();
         } else {
-            dev += "!!NO DEVELOPER SET!!";}
+            dev = "!!NO DEVELOPER SET!!";}
             return "Game{" +
                     "id=" + id +
                     ", name='" + name + '\'' +
-                    ", price=" + price + dev +
+                    ", price=" + price +
+                    ", developer=" + dev +
                     ", releases=" + releases.size() + '}';
         }
     }

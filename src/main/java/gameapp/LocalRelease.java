@@ -79,11 +79,12 @@ public class LocalRelease {
 
     @Override
     public String toString() {
-        String gameInfo=", game=";
-        if(game!=null) gameInfo+=game.getName();
-        else gameInfo+="!!NOT CONNECTED TO GAME!!";
+        String gameInfo="";
+        if(game!=null) gameInfo=game.getName();
+        else gameInfo="!!NOT CONNECTED TO GAME!!";
         return "LocalRelease{" +
-                "releaseID=" + releaseID +
+                "Game=" + gameInfo +
+                ", releaseID=" + releaseID +
                 ", release=" + release +
                 ", country='" + country + '\'' +
                 ", unitsSold=" + unitsSold +

@@ -265,7 +265,7 @@ public class Management {
             String temp = JOptionPane.showInputDialog(null, "Year");
             year = stringToInt(temp);
             if (year<1000 || year>2050) {
-                JOptionPane.showMessageDialog(null, "Please inout a year between 1000 and 2050 with four digits", "ERROR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Please input a year between 1000 and 2050 with four digits", "ERROR", JOptionPane.ERROR_MESSAGE);
             } else {break;}
         }
 
@@ -281,7 +281,7 @@ public class Management {
             String temp = JOptionPane.showInputDialog(null, "Day");
             day = stringToInt(temp);
             if (day<1 || day>31) {
-                JOptionPane.showMessageDialog(null, "Please inout a date between 1 and 31 with only digits", "ERROR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Please input a date between 1 and 31 with only digits", "ERROR", JOptionPane.ERROR_MESSAGE);
             } else {break;}
         }
         Date date = Date.valueOf(LocalDate.of(year, month, day));
