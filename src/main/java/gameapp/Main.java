@@ -20,11 +20,6 @@ public class Main {
         Menu meny = new Menu();
         while(true) {
             meny.mainMenu();
-
         }
-
-
-
-
     }
 }

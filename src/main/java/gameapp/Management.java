@@ -144,7 +144,6 @@ public class Management {
         return num;
     }
 
-
     public void showAll() { showDevelopers(); showGames(); showReleases();}
 
     public void showDevelopers() {
@@ -336,7 +335,6 @@ public class Management {
         updateGameBank();
     }
 
-
     public void newDeveloper() {
         EntityManager em = emf.createEntityManager();
         String name = JOptionPane.showInputDialog(null, "Name");
@@ -387,7 +385,6 @@ public class Management {
         em.close();
         updateReleaseBank();
     }
-
 
     public void updateGameBank() {
         EntityManager em = emf.createEntityManager();
@@ -522,7 +519,7 @@ public class Management {
         em.close();
     }
 
-    public void averageEarnings() {
+    public void averageEarningsDev() {
         EntityManager em = emf.createEntityManager();
         Query what = em.createQuery("SELECT dev FROM Developer dev");
         List<Developer> devs = what.getResultList();
@@ -572,6 +569,84 @@ public class Management {
                 "\nThe least profittable developer has earned: " + formatter.format(min);
         JOptionPane.showMessageDialog(null, answer,
                 "Most and Least profittable Developer", JOptionPane.PLAIN_MESSAGE);
+        em.close();
+    }
+
+    public void percentageFromEachGame() {
+        EntityManager em = emf.createEntityManager();
+        int devId = inputDevId();
+        Developer dev = em.find(Developer.class, devId);
+        String message= "";
+        for (Game game: dev.getGames()) {
+            if (game.getEarnings()>0) {
+                Double percentage = (game.getEarnings()/dev.getEarnings())*100;
+                message+= game.getName() + " has earned " + percentage + "% of total profits\n";
+            } else {
+                message+= game.getName() + " has earned 0% of total profits\n";
+            }
+        }
+        JOptionPane.showMessageDialog(null, message,
+                "Percentage earned per game for Developer " + dev.getDeveloperName(), JOptionPane.PLAIN_MESSAGE);
+        em.close();
+    }
+
+    public void averageEarningsGame() {
+        EntityManager em = emf.createEntityManager();
+        Query what = em.createQuery("SELECT g FROM Game g");
+        List<Game> games = what.getResultList();
+        Double totalEarned = 0.0;
+        int totalGames=0;
+        String message="";
+        for (Game g: games) {
+            totalGames++;
+            totalEarned+=g.getEarnings();
+        }
+        DecimalFormat formatter = new DecimalFormat("##0.0######");
+        Double average = totalEarned/totalGames;
+        JOptionPane.showMessageDialog(null, "Average profits for all Games is: " + formatter.format(average),
+                "Average profit", JOptionPane.PLAIN_MESSAGE);
+        em.close();
+    }
+
+    public void averageReleases() {
+        EntityManager em = emf.createEntityManager();
+        Query what = em.createQuery("SELECT g FROM Game g");
+        List<Game> games = what.getResultList();
+        Query who = em.createQuery("SELECT loco FROM LocalRelease loco");
+        List<LocalRelease> releases = who.getResultList();
+        double totalReleases=releases.size();
+        double totalGames=games.size();
+        Double average = totalReleases/totalGames;
+        JOptionPane.showMessageDialog(null, "Average amount of Releases for all Games is: " + average,
+                "Average profit", JOptionPane.PLAIN_MESSAGE);
+        em.close();
+    }
+
+    public void averagePrice() {
+        EntityManager em = emf.createEntityManager();
+        Query what = em.createQuery("SELECT g FROM Game g");
+        List<Game> games = what.getResultList();
+        Double allPrices=0.0;
+        for (Game g: games) { allPrices+=g.getPrice();}
+        Double average = allPrices/games.size();
+        JOptionPane.showMessageDialog(null, "Average price for all Games is: " + average,
+                "Average price", JOptionPane.PLAIN_MESSAGE);
+        em.close();
+    }
+
+    public void percentageSales() {
+        EntityManager em = emf.createEntityManager();
+        int id = inputGameId();
+        Game game = em.find(Game.class, id);
+        double totalSales =0;
+        for (LocalRelease loco: game.getReleases()) {totalSales+=loco.getUnitsSold();}
+        String message = "";
+        for (LocalRelease loco: game.getReleases()) {
+            Double percentage= (loco.getUnitsSold()/totalSales)*100;
+            message+="Release with ID: " + loco.getReleaseID() + " in " + loco.getCountry() + " has sold " + percentage +"% of all sales for Game " + game.getName() + "\n";
+        }
+        JOptionPane.showMessageDialog(null, message,
+                "Percentage of sales for each Release", JOptionPane.PLAIN_MESSAGE);
         em.close();
     }
 }

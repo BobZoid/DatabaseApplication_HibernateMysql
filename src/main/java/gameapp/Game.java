@@ -1,6 +1,7 @@
 package gameapp;
 
 import javax.persistence.*;
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Entity
@@ -11,9 +12,7 @@ public class Game {
     @GeneratedValue
     private int id;
     private String name;
-    //Detta är en double nu
-    private double price;
-    //Ändrat majoriteten av alla annotationer här
+    private Double price;
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "companyid")
     private Developer dev;
@@ -21,6 +20,14 @@ public class Game {
     private Set<LocalRelease> releases = new HashSet<>();
 
     public Game() {
+    }
+
+    public Double getEarnings() {
+        int sold=0;
+        DecimalFormat formatter = new DecimalFormat("##0.0######");
+        for (LocalRelease loco: releases) { sold+= loco.getUnitsSold();}
+        Double earned = price*sold;;
+        return earned;
     }
 
     public Game(Developer dev) {
@@ -70,7 +77,6 @@ public class Game {
     public void setReleases(Set<LocalRelease> releases) {
         this.releases = releases;
     }
-//Helt ny toString behövs här
 
     @Override
     public String toString() {

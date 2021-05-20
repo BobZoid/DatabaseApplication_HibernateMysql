@@ -47,33 +47,58 @@ public class Menu {
                 gameStatistics();
                 break;
             case 2:
-                //releaseStatistics();
+                releaseStatistics();
                 break;
             case 3:
                 return;
         }
     }
 
+    private void releaseStatistics() {
+    }
+
     private void gameStatistics() {
-        Object[] options = {"Developer", "Game", "Releases", "Exit"};
-        int choice = JOptionPane.showOptionDialog(null, "Statistics for",
+        Object[] options = {"Average profit for Games", "Average amount of Releases",
+                "Average Price for Game", "Percentage of sales for each Release", "Exit"};
+        int choice = JOptionPane.showOptionDialog(null, "Statistics for Games",
                 "Statistics", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+        switch (choice) {
+            case 0:
+                manage.averageEarningsGame();
+                break;
+            case 1:
+                manage.averageReleases();
+                break;
+            case 2:
+                manage.averagePrice();
+                break;
+            case 3:
+                manage.percentageSales();
+                break;
+            case 4:
+                return;
+        }
     }
 
     private void devStatistics() {
-        Object[] options = {"Average profit", "Average amount of Games", "Highest and Lowest profit", "Exit"};
+        Object[] options = {"Average profit", "Average amount of Games", "Highest and Lowest profit", "Percentage of total profit from each game", "Exit"};
         int choice = JOptionPane.showOptionDialog(null, "Statistics for",
-                "Statistics", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                "Statistics for Developers", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         switch (choice) {
             case 0:
-                manage.averageEarnings();
+                manage.averageEarningsDev();
                 break;
             case 1:
                 manage.averageAmountOfGames();
                 break;
             case 2:
                 manage.maxMinProfit();
+                break;
             case 3:
+                manage.percentageFromEachGame();
+                break;
+            case 4:
                 return;
         }
     }

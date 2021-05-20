@@ -14,7 +14,7 @@ public class Developer {
     private int companyId;
     private String developerName;
     private Double earnings;
-    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "dev")
+    @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER, mappedBy = "dev")
     private Set<Game> games = new TreeSet<>();
 
 
@@ -31,11 +31,7 @@ public class Developer {
     public void calculateEarnings() {
         double earned = 0;
         for (Game spel : games) {
-            int sold = 0;
-            for (LocalRelease loco : spel.getReleases()) {
-                sold += loco.getUnitsSold();
-            }
-            earned += spel.getPrice() * sold;
+            earned += spel.getEarnings();
         }
         earnings = earned;
     }
@@ -57,6 +53,7 @@ public class Developer {
     }
 
     public double getEarnings() {
+        calculateEarnings();
         return earnings;
     }
 
