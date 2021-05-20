@@ -11,7 +11,7 @@ public class Menu {
     Management manage = new Management();
 
     public void mainMenu() {
-        Object[] options = {"View", "Add", "Edit", "Delete", "Exit"};
+        Object[] options = {"View", "Add", "Edit", "Delete", "Statistics", "Exit"};
         int n = JOptionPane.showOptionDialog(null, "What do you want to do today?",
                 "Main Menu", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         switch (n) {
@@ -24,13 +24,59 @@ public class Menu {
             case 2:
                 editData();
                 break;
-            case 3: deleteData();
+            case 3:
+                deleteData();
                 break;
-            case 4: System.exit(0);
+            case 4:
+                statistics();
+                break;
+            case 5: System.exit(0);
             default: System.out.println("Incorrect input");
         }
     }
 
+    private void statistics() {
+        Object[] options = {"Developer", "Game", "Releases", "Exit"};
+        int choice = JOptionPane.showOptionDialog(null, "Statistics for",
+                "Statistics", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        switch (choice) {
+            case 0:
+                devStatistics();
+                break;
+            case 1:
+                gameStatistics();
+                break;
+            case 2:
+                //releaseStatistics();
+                break;
+            case 3:
+                return;
+        }
+    }
+
+    private void gameStatistics() {
+        Object[] options = {"Developer", "Game", "Releases", "Exit"};
+        int choice = JOptionPane.showOptionDialog(null, "Statistics for",
+                "Statistics", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+    }
+
+    private void devStatistics() {
+        Object[] options = {"Average profit", "Average amount of Games", "Highest and Lowest profit", "Exit"};
+        int choice = JOptionPane.showOptionDialog(null, "Statistics for",
+                "Statistics", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        switch (choice) {
+            case 0:
+                manage.averageEarnings();
+                break;
+            case 1:
+                manage.averageAmountOfGames();
+                break;
+            case 2:
+                manage.maxMinProfit();
+            case 3:
+                return;
+        }
+    }
 
     private void deleteData() {
         Object[] options = {"Delete Game", "Delete Release", "Delete Developer", "Return to main menu"};
@@ -52,8 +98,7 @@ public class Menu {
     }
 
     private void editData() {
-        Object[] options = {"Edit Game", "Edit Release", "Edit Developer", "Connect Game to Developer",
-                "Connect Release to Game", "Return to main menu"};
+        Object[] options = {"Edit Game", "Edit Release", "Edit Developer", "Connect/Disconnect", "Return to main menu"};
         int n = JOptionPane.showOptionDialog(null, "What do you want to edit?",
                 "Main Menu", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         switch (n) {
@@ -67,11 +112,31 @@ public class Menu {
                 manage.editDeveloper();
                 break;
             case 3:
-                //manage.connectToDeveloper();
+                connectDisconnect();
                 break;
             case 4:
-                //manage.connectToGame();
-            case 5:
+                return;
+        }
+    }
+
+    private void connectDisconnect() {
+        Object[] options = {"Connect Game to Developer", "Connect Release to Game", "Disconnect Game from Developer",
+                "Disconnect Release from Game", "Return to main"};
+        int choice = JOptionPane.showOptionDialog(null, "What do you want to add?",
+                "Add data", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        switch (choice) {
+            case 0:
+                manage.connectToDev();
+                break;
+            case 1:
+                manage.connectToGame();
+                break;
+            case 2:
+                manage.disconnectFromDev();
+                break;
+            case 3:
+                manage.disconnectFromGame();
+            case 4:
                 return;
         }
     }
@@ -138,7 +203,7 @@ public class Menu {
                 manage.showReleasesByDev();
                 break;
             case 3:
-                //manage.showReleasesByID();
+                manage.showReleasesByID();
                 break;
             case 4:
                 return;

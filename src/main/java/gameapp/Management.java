@@ -6,10 +6,9 @@ package gameapp;
 import javax.persistence.*;
 import javax.swing.*;
 import java.sql.Date;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
-import java.util.InputMismatchException;
 import java.util.List;
-import java.util.Scanner;
 
 public class Management {
     EntityManagerFactory emf = Persistence.createEntityManagerFactory("bajs");
@@ -146,7 +145,7 @@ public class Management {
     }
 
 
-    public void showAll() { showGames(); showDevelopers(); showReleases();}
+    public void showAll() { showDevelopers(); showGames(); showReleases();}
 
     public void showDevelopers() {
         EntityManager em = emf.createEntityManager();
@@ -159,8 +158,6 @@ public class Management {
         JOptionPane.showMessageDialog(null, devs, "Developers in database", JOptionPane.PLAIN_MESSAGE);
         em.close();
     }
-
-
 
     public void deleteDev() {
         EntityManager em = emf.createEntityManager();
@@ -307,6 +304,7 @@ public class Management {
             default:
                 return;
         }
+        dev.calculateEarnings();
         em.getTransaction().begin();
         em.persist(dev);
         em.getTransaction().commit();
@@ -328,8 +326,9 @@ public class Management {
                 JOptionPane.showMessageDialog(null, "Incorrect input", "ERROR", JOptionPane.ERROR_MESSAGE);
             } else break;
         }
-        System.out.println(game.getId());
         game.setPrice(price);
+        dev.getGames().add(game);
+        dev.calculateEarnings();
         em.getTransaction().begin();
         em.persist(game);
         em.getTransaction().commit();
@@ -344,6 +343,7 @@ public class Management {
         int id = generateId();
         Developer dev = new Developer(id, name);
         Developer.idBank.add(id);
+        dev.calculateEarnings();
         em.getTransaction().begin();
         em.persist(dev);
         em.getTransaction().commit();
@@ -417,93 +417,161 @@ public class Management {
     }
 
     public void showReleasesByDev() {
-    }
-/*
-        public void connectToDeveloper() {
-        EntityManager em = emf.createEntityManager();
-        System.out.print("\n ID of game: ");
-        int gem = inputGameId();
-        System.out.print("\nID of developer: ");
-        int id = inputDevId();
-        if (id==0 || gem==0) {
-            System.out.println("Developer or game not found. Returning to main");
-            return;
-        }
-        Game spel = em.find(Game.class, gem);
-        Developer dev = em.find(Developer.class, id);
-        em.getTransaction().begin();
-        spel.setDev(dev);
-        dev.getGames().add(spel);
-        em.getTransaction().commit();
-        em.close();
-    }
-    private double scanDouble() {
-        double scanned;
-        while(true) {
-            try {
-                scanned=scan.nextDouble();
-                break;
-            } catch(InputMismatchException e) {
-                System.out.println("Please input numerical data");
-                scan.nextLine();
-            }
-        }
-        scan.nextLine();
-        return scanned;
-    }
-
-    public void findByDev() {
         int id = inputDevId();
         EntityManager em = emf.createEntityManager();
-        System.out.println("You have selected: ");
-        System.out.println(em.find(Developer.class, id));
         Developer dev = em.find(Developer.class, id);
-        System.out.println("<Games made by selected developer>");
-        dev.getGames().stream().forEach(System.out::println);
-
-    }
-
-    public void removeGameFromDev() {
-        EntityManager em = emf.createEntityManager();
-        Developer dev = em.find(Developer.class, inputDevId());
-        Game gem;
-        if (dev.getGames().size()>0) {
-            while(true) {
-                gem = em.find(Game.class, inputGameId());
-                //Kan man göra såhär? Kanske en equals metod behövs
-                if(gem.getDev().equals(dev)) break;
-                else {
-                    System.out.println("Game is not made by selected developer. Please try again.");
-                }
+        String name = "Releases for " + dev.getDeveloperName();
+        String releases = "";
+        for (Game game: dev.getGames()) {
+            for (LocalRelease loco: game.getReleases()) {
+                releases += loco + "\n";
             }
-        } else {
-            System.out.println("Developer does not have any registered games. Returning to main menu");
-            return;
         }
-        gem.setDev(null);
-        dev.getGames().remove(gem);
-        em.getTransaction().begin();
-        em.merge(gem);
-        em.merge(dev);
-        em.getTransaction().commit();
         em.close();
-    }
-
-    public void showReleasesByGame(Game spel) {
-        System.out.println("<Displaying all releases for Game: " + spel.getName() + ">");
-        spel.getReleases().forEach(System.out::println);
-        System.out.println("<End of list>\n");
-    }
-
-    public void showReleasesByDev(Developer dev) {
-        System.out.println("<Displaying all releases for all games by " + dev.getDeveloperName() + ">\n");
-        dev.getGames().forEach(spel->showReleasesByGame(spel));
-        System.out.println("<End of list>\n");
+        JOptionPane.showMessageDialog(null, releases, name, JOptionPane.PLAIN_MESSAGE);
     }
 
     public void showReleasesByID() {
-        if (LocalRelease.idBank.size()<1) {
-            System.out.println("\nNo releases available\n");
+        int id = inputReleaseId();
+        EntityManager em = emf.createEntityManager();
+        String name = "Release with ID: " + id;
+        LocalRelease loco = em.find(LocalRelease.class, id);
+        String releases = loco.toString();
+        JOptionPane.showMessageDialog(null, releases, name, JOptionPane.PLAIN_MESSAGE);
+
+    }
+
+    public void connectToDev() {
+        EntityManager em = emf.createEntityManager();
+        int gameId = inputGameId();
+        int devId = inputDevId();
+        if (gameId<1 || devId<1) {
+            JOptionPane.showMessageDialog(null, "Developer or Game not found. Returning to main", "ERROR", JOptionPane.ERROR_MESSAGE);
+            return;
         }
-    } */
+        Game game = em.find(Game.class, gameId);
+        Developer dev = em.find(Developer.class, devId);
+        game.setDev(dev);
+        dev.getGames().add(game);
+        em.getTransaction().begin();
+        em.persist(game);
+        em.persist(dev);
+        em.getTransaction().commit();
+        em.close();
+    }
+
+    public void disconnectFromDev() {
+        int id = inputGameId();
+        EntityManager em = emf.createEntityManager();
+        Game game = em.find(Game.class, id);
+        int devId = game.getDev().getCompanyId();
+        Developer dev = em.find(Developer.class, devId);
+        game.setDev(null);
+        dev.getGames().remove(game);
+        em.getTransaction().begin();
+        em.persist(game);
+        em.persist(dev);
+        em.getTransaction().commit();
+        em.close();
+    }
+
+    public void connectToGame() {
+        EntityManager em = emf.createEntityManager();
+        int releaseId = inputReleaseId();
+        int gameId = inputGameId();
+        if (gameId<1 || releaseId<1) {
+            JOptionPane.showMessageDialog(null, "Release or Game not found. Returning to main", "ERROR", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Game game = em.find(Game.class, gameId);
+        LocalRelease loco = em.find(LocalRelease.class, releaseId);
+        loco.setGame(game);
+        game.getReleases().add(loco);
+        em.getTransaction().begin();
+        em.persist(loco);
+        em.persist(game);
+        em.getTransaction().commit();
+        em.close();
+    }
+
+    public void disconnectFromGame() {
+        EntityManager em = emf.createEntityManager();
+        int releaseId = inputReleaseId();
+        LocalRelease loco = em.find(LocalRelease.class, releaseId);
+        int gameId = loco.game.getId();
+        Game game = em.find(Game.class, gameId);
+        loco.setGame(null);
+        game.getReleases().remove(loco);
+        em.getTransaction().begin();
+        em.persist(loco);
+        em.persist(game);
+        em.getTransaction().commit();
+        em.close();
+    }
+
+    public void setEarnings() {
+        EntityManager em = emf.createEntityManager();
+        Query what = em.createQuery("SELECT d FROM Developer d");
+        List<Developer> devs = what.getResultList();
+        em.getTransaction().begin();
+        for (Developer dev: devs) {
+            dev.calculateEarnings();
+            em.persist(dev);
+        }
+        em.getTransaction().commit();
+        em.close();
+    }
+
+    public void averageEarnings() {
+        EntityManager em = emf.createEntityManager();
+        Query what = em.createQuery("SELECT dev FROM Developer dev");
+        List<Developer> devs = what.getResultList();
+        int devAmount=0;
+        double totalEarnings = 0;
+        for (Developer dev: devs) {
+            dev.calculateEarnings();
+            devAmount++;
+            totalEarnings += dev.getEarnings();
+        }
+        Double temp = totalEarnings / devAmount;
+        Double average = temp.doubleValue();
+        DecimalFormat formatter = new DecimalFormat("##0.0######");
+        JOptionPane.showMessageDialog(null, "Average profit for all Developers is: " + formatter.format(average),
+                "Average profit", JOptionPane.PLAIN_MESSAGE);
+        em.close();
+    }
+
+    public void averageAmountOfGames() {
+        EntityManager em = emf.createEntityManager();
+        Query what = em.createQuery("SELECT dev FROM Developer dev");
+        List<Developer> devs = what.getResultList();
+        double games=0;
+        double alldevs=0;
+        for (Developer dev: devs) {
+            games+=dev.getGames().size();
+            alldevs++;
+        }
+        double average = games/alldevs;
+        JOptionPane.showMessageDialog(null, "Average amount of games for all Developers is: " + average,
+                "Average Games released", JOptionPane.PLAIN_MESSAGE);
+        em.close();
+    }
+
+    public void maxMinProfit() {
+        EntityManager em = emf.createEntityManager();
+        Query what = em.createQuery("SELECT dev FROM Developer dev");
+        List<Developer> devs = what.getResultList();
+        Double max=devs.get(0).getEarnings();
+        Double min=devs.get(0).getEarnings();
+        for (Developer dev: devs) {
+            if (dev.getEarnings()>max) max=dev.getEarnings();
+            if (dev.getEarnings()<min) min=dev.getEarnings();
+        }
+        DecimalFormat formatter = new DecimalFormat("##0.0######");
+        String answer = "The most profittable developer has earned: " + formatter.format(max) +
+                "\nThe least profittable developer has earned: " + formatter.format(min);
+        JOptionPane.showMessageDialog(null, answer,
+                "Most and Least profittable Developer", JOptionPane.PLAIN_MESSAGE);
+        em.close();
+    }
 }

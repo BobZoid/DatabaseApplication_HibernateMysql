@@ -8,6 +8,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         Management manage = new Management();
+        manage.setEarnings();
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("bajs");
         EntityManager em = emf.createEntityManager();
         Query what = em.createQuery("SELECT d.companyId FROM Developer d");

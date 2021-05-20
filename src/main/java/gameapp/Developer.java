@@ -1,6 +1,7 @@
 package gameapp;
 
 import javax.persistence.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
@@ -12,8 +13,7 @@ public class Developer {
     @Id
     private int companyId;
     private String developerName;
-    //detta är en double nu
-    private double earnings;
+    private Double earnings;
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY, mappedBy = "dev")
     private Set<Game> games = new TreeSet<>();
 
@@ -21,7 +21,6 @@ public class Developer {
     public Developer(int id, String developerName) {
         companyId = id;
         this.developerName = developerName;
-        this.earnings = earnings;
         Developer.idBank.add(id);
     }
 
@@ -29,7 +28,6 @@ public class Developer {
     public Developer() {
     }
 
-    //Helt ny metod
     public void calculateEarnings() {
         double earned = 0;
         for (Game spel : games) {
@@ -74,19 +72,19 @@ public class Developer {
         this.games = games;
     }
 
-    public void calculateEarnings(double earnings) {
-        this.earnings = earnings;
-    }
 
     @Override
     public String toString() {
+        calculateEarnings();
         String end = "";
         for (Game gem : games) {
             end += gem.getName() + ", ";
         }
+        Double dd = earnings.doubleValue();
+        DecimalFormat formatter = new DecimalFormat("##0.0######");
         return "\nCompanyID: " + companyId +
                 "\nDeveloperName: " + developerName +
-                "\nEarnings: " + earnings +
+                "\nEarnings: " + formatter.format(dd) +
                 "\nGames: " + end;
     }
 

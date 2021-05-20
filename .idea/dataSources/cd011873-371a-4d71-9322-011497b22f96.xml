@@ -4533,7 +4533,6 @@ SELECT|sys.sys_config
     <column id="1108" parent="367" name="companyId">
       <Position>4</Position>
       <DataType>int|0s</DataType>
-      <NotNull>1</NotNull>
     </column>
     <index id="1109" parent="367" name="FKav4w84hoseqbd68hejk5bgr8s">
       <ColNames>companyId</ColNames>
