@@ -1,13 +1,9 @@
 package gameapp;
 
 
-import javax.persistence.*;
 import javax.swing.*;
-import java.util.Scanner;
 
 public class Menu {
-    EntityManagerFactory emf = Persistence.createEntityManagerFactory("bajs");
-    Scanner scan = new Scanner(System.in);
     Management manage = new Management();
 
     public void mainMenu() {
@@ -30,13 +26,15 @@ public class Menu {
             case 4:
                 statistics();
                 break;
-            case 5: System.exit(0);
+            case 5:
+                manage.setEarnings();
+                System.exit(0);
             default: System.out.println("Incorrect input");
         }
     }
 
     private void statistics() {
-        Object[] options = {"Developer", "Game", "Releases", "Exit"};
+        Object[] options = {"Developer", "Game", "Exit"};
         int choice = JOptionPane.showOptionDialog(null, "Statistics for",
                 "Statistics", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         switch (choice) {
@@ -47,14 +45,8 @@ public class Menu {
                 gameStatistics();
                 break;
             case 2:
-                releaseStatistics();
-                break;
-            case 3:
                 return;
         }
-    }
-
-    private void releaseStatistics() {
     }
 
     private void gameStatistics() {
@@ -211,8 +203,6 @@ public class Menu {
     }
 
     private void showRelease() {
-        EntityManager em = emf.createEntityManager();
-
         Object[] options = {"View All", "View Releases based on Game", "View Releases based on Developer", "View Releases based on ID", "Return to main menu"};
         int choice = JOptionPane.showOptionDialog(null, "What do you want to view?",
                 "View Releases", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);

@@ -1,7 +1,6 @@
 package gameapp;
 
 import javax.persistence.*;
-import java.text.DecimalFormat;
 import java.util.*;
 
 @Entity
@@ -24,9 +23,8 @@ public class Game {
 
     public Double getEarnings() {
         int sold=0;
-        DecimalFormat formatter = new DecimalFormat("##0.0######");
         for (LocalRelease loco: releases) { sold+= loco.getUnitsSold();}
-        Double earned = price*sold;;
+        Double earned = price*sold;
         return earned;
     }
 
@@ -80,7 +78,7 @@ public class Game {
 
     @Override
     public String toString() {
-        String dev="";
+        String dev;
         if (this.dev != null) {
             dev =this.dev.getDeveloperName();
         } else {
@@ -90,6 +88,26 @@ public class Game {
                     ", name='" + name + '\'' +
                     ", price=" + price +
                     ", developer=" + dev +
-                    ", releases=" + releases.size() + '}';
+                    ", releases=" + releases.size() + "}\n";
         }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Game game = (Game) o;
+
+        if (id != game.id) return false;
+        if (name != null ? !name.equals(game.name) : game.name != null) return false;
+        return price != null ? price.equals(game.price) : game.price == null;
     }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (price != null ? price.hashCode() : 0);
+        return result;
+    }
+}

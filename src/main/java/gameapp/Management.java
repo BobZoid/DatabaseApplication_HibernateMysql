@@ -16,6 +16,11 @@ public class Management {
     public void deleteGame() {
         EntityManager em = emf.createEntityManager();
         int id = inputGameId();
+        if (id<1) {
+            JOptionPane.showMessageDialog(null, "No games to delete. Returning to main", "ERROR",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         Game spel = em.find(Game.class, id);
         em.getTransaction().begin();
         Query allDevs = em.createQuery("SELECT d FROM Developer d");
@@ -28,7 +33,6 @@ public class Management {
         Query allReleases = em.createQuery("SELECT r FROM LocalRelease r");
         List<LocalRelease> allR = allReleases.getResultList();
         for (LocalRelease loco: allR) {
-            final Game[] z = new Game[1];
             if (loco.getGame().getId()==id) {
                 loco.setGame(null);
 
@@ -114,12 +118,12 @@ public class Management {
     }
 
     public void showGames() {
-        EntityManager em = emf.createEntityManager();;
+        EntityManager em = emf.createEntityManager();
         Query what = em.createQuery("SELECT g FROM Game g");
         List<Game> content = what.getResultList();
         String games ="";
         for (Game g: content) {
-            games += g + "\n;";
+            games += g + "\n";
         }
         JOptionPane.showMessageDialog(null, games, "Games in database", JOptionPane.PLAIN_MESSAGE);
     }
@@ -152,7 +156,7 @@ public class Management {
         List<Developer> content = what.getResultList();
         String devs ="";
         for (Developer d: content) {
-            devs += d + "\n;";
+            devs += d + "\n";
         }
         JOptionPane.showMessageDialog(null, devs, "Developers in database", JOptionPane.PLAIN_MESSAGE);
         em.close();
@@ -194,6 +198,7 @@ public class Management {
 
     public void editGame() {
         int id = inputGameId();
+        if (id==0) return;
         EntityManager em = emf.createEntityManager();
         Game game = em.find(Game.class, id);
         Object[] options = {"Name", "Price", "Return to main"};
@@ -225,6 +230,7 @@ public class Management {
 
     public void editRelease() {
         int id = inputReleaseId();
+        if (id==0) return;
         EntityManager em = emf.createEntityManager();
         LocalRelease loco = em.find(LocalRelease.class, id);
         Object[] options = {"Release Date", "Country", "Units Sold", "Return to main"};
@@ -284,13 +290,13 @@ public class Management {
                 JOptionPane.showMessageDialog(null, "Please input a date between 1 and 31 with only digits", "ERROR", JOptionPane.ERROR_MESSAGE);
             } else {break;}
         }
-        Date date = Date.valueOf(LocalDate.of(year, month, day));
-        return date;
+        return Date.valueOf(LocalDate.of(year, month, day));
     }
 
     public void editDeveloper() {
         EntityManager em = emf.createEntityManager();
         int id = inputDevId();
+        if (id==0) return;
         Developer dev = em.find(Developer.class, id);
         Object[] options = {"Company name", "Return to main"};
         int choice = JOptionPane.showOptionDialog(null, "What would you like to edit?", "Edit Developer",
@@ -313,6 +319,7 @@ public class Management {
     public void newGame() {
         EntityManager em = emf.createEntityManager();
         int devId = inputDevId();
+        if (devId==0) return;
         Developer dev = em.find(Developer.class, devId);
         Game game = new Game (dev);
         String name = JOptionPane.showInputDialog(null, "Name");
@@ -403,6 +410,7 @@ public class Management {
     public void showReleasesByGame() {
         EntityManager em = emf.createEntityManager();
         int id = inputGameId();
+        if (id==0) return;
         Game game = em.find(Game.class, id);
         String name = "Releases for " + game.getName();
         String releases = "";
@@ -415,6 +423,7 @@ public class Management {
 
     public void showReleasesByDev() {
         int id = inputDevId();
+        if (id==0) return;
         EntityManager em = emf.createEntityManager();
         Developer dev = em.find(Developer.class, id);
         String name = "Releases for " + dev.getDeveloperName();
@@ -430,6 +439,7 @@ public class Management {
 
     public void showReleasesByID() {
         int id = inputReleaseId();
+        if (id==0) return;
         EntityManager em = emf.createEntityManager();
         String name = "Release with ID: " + id;
         LocalRelease loco = em.find(LocalRelease.class, id);
@@ -459,8 +469,12 @@ public class Management {
 
     public void disconnectFromDev() {
         int id = inputGameId();
+        if (id==0) return;
         EntityManager em = emf.createEntityManager();
         Game game = em.find(Game.class, id);
+        if (game.getDev()==null) {
+            JOptionPane.showMessageDialog(null, "Game not connected to any developer", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
         int devId = game.getDev().getCompanyId();
         Developer dev = em.find(Developer.class, devId);
         game.setDev(null);
@@ -494,7 +508,11 @@ public class Management {
     public void disconnectFromGame() {
         EntityManager em = emf.createEntityManager();
         int releaseId = inputReleaseId();
+        if (releaseId==0) return;
         LocalRelease loco = em.find(LocalRelease.class, releaseId);
+        if (loco.getGame()==null) {
+            JOptionPane.showMessageDialog(null, "Release not connected to any Game", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
         int gameId = loco.game.getId();
         Game game = em.find(Game.class, gameId);
         loco.setGame(null);
@@ -531,7 +549,7 @@ public class Management {
             totalEarnings += dev.getEarnings();
         }
         Double temp = totalEarnings / devAmount;
-        Double average = temp.doubleValue();
+        Double average = temp;
         DecimalFormat formatter = new DecimalFormat("##0.0######");
         JOptionPane.showMessageDialog(null, "Average profit for all Developers is: " + formatter.format(average),
                 "Average profit", JOptionPane.PLAIN_MESSAGE);
@@ -575,12 +593,14 @@ public class Management {
     public void percentageFromEachGame() {
         EntityManager em = emf.createEntityManager();
         int devId = inputDevId();
+        if (devId<1) return;
         Developer dev = em.find(Developer.class, devId);
         String message= "";
         for (Game game: dev.getGames()) {
             if (game.getEarnings()>0) {
                 Double percentage = (game.getEarnings()/dev.getEarnings())*100;
-                message+= game.getName() + " has earned " + percentage + "% of total profits\n";
+                DecimalFormat formatter = new DecimalFormat("#.00");
+                message+= game.getName() + " has earned " + formatter.format(percentage) + "% of total profits\n";
             } else {
                 message+= game.getName() + " has earned 0% of total profits\n";
             }
@@ -596,7 +616,6 @@ public class Management {
         List<Game> games = what.getResultList();
         Double totalEarned = 0.0;
         int totalGames=0;
-        String message="";
         for (Game g: games) {
             totalGames++;
             totalEarned+=g.getEarnings();
@@ -637,13 +656,15 @@ public class Management {
     public void percentageSales() {
         EntityManager em = emf.createEntityManager();
         int id = inputGameId();
+        if (id<1) return;
         Game game = em.find(Game.class, id);
         double totalSales =0;
         for (LocalRelease loco: game.getReleases()) {totalSales+=loco.getUnitsSold();}
         String message = "";
         for (LocalRelease loco: game.getReleases()) {
             Double percentage= (loco.getUnitsSold()/totalSales)*100;
-            message+="Release with ID: " + loco.getReleaseID() + " in " + loco.getCountry() + " has sold " + percentage +"% of all sales for Game " + game.getName() + "\n";
+            DecimalFormat formatter = new DecimalFormat("#.00");
+            message+="Release with ID: " + loco.getReleaseID() + " in " + loco.getCountry() + " has sold " + formatter.format(percentage) +"% of all sales for Game " + game.getName() + "\n";
         }
         JOptionPane.showMessageDialog(null, message,
                 "Percentage of sales for each Release", JOptionPane.PLAIN_MESSAGE);

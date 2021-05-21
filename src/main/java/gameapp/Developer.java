@@ -17,16 +17,13 @@ public class Developer {
     @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER, mappedBy = "dev")
     private Set<Game> games = new TreeSet<>();
 
-
     public Developer(int id, String developerName) {
         companyId = id;
         this.developerName = developerName;
         Developer.idBank.add(id);
     }
 
-
-    public Developer() {
-    }
+    public Developer() {}
 
     public void calculateEarnings() {
         double earned = 0;
@@ -69,7 +66,6 @@ public class Developer {
         this.games = games;
     }
 
-
     @Override
     public String toString() {
         calculateEarnings();
@@ -77,7 +73,7 @@ public class Developer {
         for (Game gem : games) {
             end += gem.getName() + ", ";
         }
-        Double dd = earnings.doubleValue();
+        Double dd = earnings;
         DecimalFormat formatter = new DecimalFormat("##0.0######");
         return "\nCompanyID: " + companyId +
                 "\nDeveloperName: " + developerName +

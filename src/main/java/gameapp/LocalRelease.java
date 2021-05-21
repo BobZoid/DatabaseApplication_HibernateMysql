@@ -22,20 +22,14 @@ public class LocalRelease {
     Game game;
 
 
-    public LocalRelease(Date release, String country, int unitsSold, Game spel) {
+    public LocalRelease(Date release, String country, int unitsSold, Game game) {
         this.release = release;
         this.country = country;
         this.unitsSold = unitsSold;
-        game=spel;
+        this.game =game;
     }
 
-    public LocalRelease() {
-
-    }
-
-    public void Game(Game spel) {
-        game=spel;
-    }
+    public LocalRelease() {}
 
     public int getUnitsSold() {
         return unitsSold;
@@ -79,15 +73,15 @@ public class LocalRelease {
 
     @Override
     public String toString() {
-        String gameInfo="";
+        String gameInfo;
         if(game!=null) gameInfo=game.getName();
         else gameInfo="!!NOT CONNECTED TO GAME!!";
         return "LocalRelease{" +
                 "Game=" + gameInfo +
-                ", releaseID=" + releaseID +
-                ", release=" + release +
+                ", ID=" + releaseID +
+                ", release=" + release.toString() +
                 ", country='" + country + '\'' +
                 ", unitsSold=" + unitsSold +
-                '}';
+                '}' + "\n";
     }
 }
